@@ -22,3 +22,8 @@ CREATE DOCKER SERVICES
 
 docker-compose up -d
 
+RUN THE PROJECT
+
+cd src/Publisher
+dotnet run --environment Development
+
