@@ -1,4 +1,4 @@
-namespace Publisher.Models;
+namespace Consumer.Models;
 public class MessageModel
 {
     public Guid Id { get; set; }

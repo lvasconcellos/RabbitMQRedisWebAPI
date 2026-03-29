@@ -1,26 +1,30 @@
 using MassTransit;
 using Publisher.Models;
 
-namespace Publisher.Services;
-
-public class RabbitMqMessagePublisher : IMessagePublisher
+namespace Publisher.Services
 {
-    private readonly IPublishEndpoint _publishEndpoint;
-
-    public RabbitMqMessagePublisher(IPublishEndpoint publishEndpoint)
+    public class RabbitMqMessagePublisher : IMessagePublisher
     {
-        _publishEndpoint = publishEndpoint;
-    }
+        private readonly IBus _bus;
 
-    public async Task PublishAsync(string content)
-    {
-        var message = new MessageModel
+        public RabbitMqMessagePublisher(IBus bus)
         {
-            Id = Guid.NewGuid(),
-            Content = content,
-            Timestamp = DateTime.UtcNow
-        };
+            _bus = bus;
+        }
 
-        await _publishEndpoint.Publish(message);
+        public async Task PublishAsync(string content)
+        {
+            if (string.IsNullOrWhiteSpace(content))
+                throw new ArgumentException("Message content cannot be empty.");
+
+            var message = new MessageModel
+            {
+                Id = Guid.NewGuid(),
+                Timestamp = DateTime.UtcNow,
+                Content = content
+            };
+
+            await _bus.Publish<MessageModel>(message);
+        }
     }
 }
